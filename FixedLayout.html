@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html {
+            height: 100%;
+            font-size: 100px; /*iphone5*/
+        }
+
+        @media screen and (min-width: 375px) {
+            html {
+                font-size: 117.1875px;/*iphone6*/
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            html {
+                font-size: 129.375px;/*iphone6p*/
+            }
+        }
+
+        body {
+            background: #fff;
+            height: 100%;
+            margin: 0;
+
+        }
+
+        #view {
+            height: 100%;
+        }
+
+        #header {
+            position: fixed;
+            top:0;
+            height: 0.5rem;
+            background: #dedede;
+            width: 100%;
+        }
+
+        #content{
+            position: absolute;
+            overflow-y: auto;
+            width: 100%;
+            top:0.6rem;
+            bottom: 0.6rem;
+            background: #cdcdcd;
+        }
+
+        #footer{
+            position: fixed;
+            height: 0.5rem;
+            background: #dedede;
+            width: 100%; 
+            bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view">
+        <div id="header"></div>
+        <div id="content"></div>
+        <div id="footer"></div>
+    </div>
+</body>
+
+</html>
