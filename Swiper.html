@@ -62,6 +62,7 @@
             transition-property: transform, -webkit-transform;
             -webkit-box-sizing: content-box;
             box-sizing: content-box;
+
         }
 
 
@@ -102,6 +103,20 @@
 
 </html>
 <script>
+    function IsPC() {
+        var userAgentInfo = navigator.userAgent;
+        var Agents = ["Android", "iPhone",
+            "SymbianOS", "Windows Phone",
+            "iPad", "iPod"];
+        var flag = true;
+        for (var v = 0; v < Agents.length; v++) {
+            if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                flag = false;
+                break;
+            }
+        }
+        return flag;
+    }
     var Swiper = (function () {
         var Swiper;
         function swiper() {
@@ -131,58 +146,105 @@
         }
 
         swiper.prototype.setEvent = function () {
-            this.onMouseDown();
+            var isPc = IsPC();
+            if (isPc) {
+                this.setPcEvent();
+            }
+            else {
+this.setTouchEvent();
+            }
         }
         swiper.prototype.judgeIsEdge = function (direction) {
+
             if (direction == "--") {
                 this.currentSlideIndex--;
-                if (this.currentSlideIndex <= 0) {
-                    this.moveTo(this.currentSlideIndex);
+                if (this.currentSlideIndex >= 0) {
+                    this.moveTo(-this.currentSlideIndex);
+                   
                 }
-                else{
+                else {
                     this.currentSlideIndex++;
+                 
                 }
             }
             if (direction == "++") {
                 this.currentSlideIndex++;
-                if (this.currentSlideIndex >= (this.slideCount--)) {
-                    this.moveTo(this.currentSlideIndex);
+                if (this.currentSlideIndex <= (this.slideCount - 1)) {
+                    this.moveTo(-this.currentSlideIndex);
+                  
                 }
-                else{
+                else {
                     this.currentSlideIndex--;
+                  
                 }
             }
-         
+            console.log(direction);
+            console.log(this.currentSlideIndex);
         }
-        swiper.prototype.onMouseDown = function () {
+        swiper.prototype.setPcEvent = function () {
             var _this = this;
             this.wrapper.on("mousedown", function (e) {
                 _this.touchFlag = true;
                 _this.activePointX = e.clientX;
+                _this.wrapper.css("transition", "");
 
             });
             this.wrapper.on("mouseup", function (e) {
                 _this.touchFlag = false;
                 var moveWidth = e.clientX - _this.activePointX;
-                if (moveWidth > 0) { _this.direction = "++" }
-                else { _this.direction = "--" }
+                if (moveWidth > 0) { _this.direction = "--" }
+                else { _this.direction = "++" }
 
                 _this.judgeIsEdge(_this.direction);
-                if(!_this.isEdge){
-        
+                _this.wrapper.css("transition", "all .5s");
+
+            });
+            this.wrapper.on("mousemove", function (e) {
+
+                if (_this.touchFlag) {
+                    var moveWidth = _this.currentTransform + e.clientX - _this.activePointX;
+
+                    $(this).css("transform", "translate3d(" + moveWidth + "px, 0px, 0px)");
+
                 }
 
             });
-            // this.wrapper.on("mousemove", function (e) {
-
-            //     if (_this.touchFlag) {
-            //         _this.moveWidth = e.clientX - _this.activePointX+_this.moveWidth;
-            //         $(this).css("transform", "translate3d(" + _this.moveWidth + "px, 0px, 0px)");
-
-            //     }
-
-            // });
         }
+
+                swiper.prototype.setTouchEvent = function () {
+            var _this = this;
+            this.wrapper.on("touchstart", function (e) {
+                var touch = e.originalEvent.targetTouches[0]; 
+                _this.touchFlag = true;
+                _this.activePointX = touch.pageX;
+                _this.wrapper.css("transition", "");
+             
+
+            });
+            this.wrapper.on("touchend", function (e) {
+                var touch = e.originalEvent.changedTouches[0]; 
+                _this.touchFlag = false;
+                var moveWidth = touch.pageX - _this.activePointX;
+                if (moveWidth > 0) { _this.direction = "--" }
+                else { _this.direction = "++" }
+
+                _this.judgeIsEdge(_this.direction);
+                _this.wrapper.css("transition", "all .5s");
+
+            });
+            this.wrapper.on("touchmove", function (e) {
+                var touch = e.originalEvent.targetTouches[0]; 
+                
+                if (_this.touchFlag) {
+                    var moveWidth = _this.currentTransform + touch.pageX - _this.activePointX;
+
+                    $(this).css("transform", "translate3d(" + moveWidth + "px, 0px, 0px)");
+
+                }
+
+            });
+        }
+
 
         swiper.prototype.moveTo = function (index) {
             this.wrapper.css("transform", "translate3d(" + index * this.width + "px, 0px, 0px)");
